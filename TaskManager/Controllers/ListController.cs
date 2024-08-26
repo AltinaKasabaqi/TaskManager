@@ -6,68 +6,105 @@ using TaskManager.Services.Interfaces;
 
 namespace TaskManager.Controllers
 {
-    [ApiController] 
-    [Route("api/[controller]")]
+   
     public class ListController : Controller
     {
         private readonly IListService _listService;
 
-        public ListController(IListService listservice)
+        public ListController(IListService listService)
         {
-            _listService = listservice;
+            _listService = listService;
         }
 
-
-
-        [HttpPost(Name = "CreateList")]
-        public async Task<IActionResult> CreateList([FromBody] AddOrUpdateList listDto)
+        // GET: /List
+        public async Task<IActionResult> Index()
         {
-            if (listDto == null)
-            {
-                return BadRequest("List object is null");
-            }
-
-            var newListId = await _listService.CreateList(listDto);
-
-            return CreatedAtAction(nameof(GetListById), new { id = newListId }, listDto);
+            var lists = await _listService.GetLists();
+            return View(lists); 
         }
 
-
-
-        [HttpGet("{id}", Name = "GetListById")]
-        public async Task<IActionResult> GetListById(int id)
+        // GET: /List/Details/5
+        public async Task<IActionResult> Details(int id)
         {
             var list = await _listService.GetListById(id);
             if (list == null)
             {
                 return NotFound();
             }
-            return Ok(list);
+            return View(list); 
         }
 
-        [HttpGet(Name = "GetLists")]
-        public async Task<IActionResult> GetLists()
+        // GET: /List/Create
+        public IActionResult Create()
         {
-            var lists = await _listService.GetLists();
-            return Ok(lists);
+            return View(); 
         }
 
-        [HttpPut("{id}", Name = "UpdateList")]
-        public async Task<IActionResult> UpdateList(int id, [FromBody] AddOrUpdateList list)
+        // POST: /List/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("ListName")] AddOrUpdateList listDto)
         {
-            //if (list == null || list.ListId != id)
-            //{
-            //    return BadRequest("Invalid list object");
-            //}
-            await _listService.UpdateList(id, list);
-            return NoContent();
+            if (ModelState.IsValid)
+            {
+                var newListId = await _listService.CreateList(listDto);
+                return RedirectToAction(nameof(Details), new { id = newListId });
+            }
+            return View(listDto); 
         }
 
-        [HttpDelete("{id}", Name = "DeleteList")]
-        public async Task<IActionResult> DeleteList(int id)
+        // GET: /List/Edit/5
+        public async Task<IActionResult> Edit(int id)
+        {
+            var list = await _listService.GetListById(id);
+            if (list == null)
+            {
+                return NotFound();
+            }
+            return View(list); 
+        }
+
+        // POST: /List/Edit/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("ListName")] AddOrUpdateList listDto)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(listDto); 
+            }
+
+            try
+            {
+                await _listService.UpdateList(id, listDto);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+
+            return RedirectToAction(nameof(Details), new { id = id });
+        }
+
+
+        // GET: /List/Delete/5
+        public async Task<IActionResult> Delete(int id)
+        {
+            var list = await _listService.GetListById(id);
+            if (list == null)
+            {
+                return NotFound();
+            }
+            return View(list); 
+        }
+
+        // POST: /List/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _listService.DeleteList(id);
-            return NoContent();
+            return RedirectToAction(nameof(Index));
         }
     }
 }
