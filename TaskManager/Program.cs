@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using TaskManager.Data;
+using TaskManager.Helpers;
 using TaskManager.Data.DbInitializer;
 using TaskManager.Services;
 using TaskManager.Services.Interfaces;
@@ -13,7 +14,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DevConnection"));
 });
+
+
+builder.Services.AddScoped<ITaskService, TaskService>();
 builder.Services.AddScoped<IListService, ListService>();
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+
 builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 // Shto Swagger
 builder.Services.AddSwaggerGen(c =>
@@ -25,6 +32,8 @@ builder.Services.AddSwaggerGen(c =>
         Description = "A simple ASP.NET Core MVC API for managing tasks"
     });
 });
+
+
 
 var app = builder.Build();
 
