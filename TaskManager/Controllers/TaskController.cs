@@ -1,14 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using TaskManager.Services.Interfaces;
-using TaskManager.Data.Entities;
-using System.Threading.Tasks;
 using TaskManager.Models;
-
+using TaskManager.Services.Interfaces;
 namespace TaskManager.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
-    public class TaskController : ControllerBase
+    public class TaskController : Controller
     {
         private readonly ITaskService _taskService;
 
@@ -17,61 +12,95 @@ namespace TaskManager.Controllers
             _taskService = taskService;
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAllTasks()
+        
+        public async Task<IActionResult> Index()
         {
             var tasks = await _taskService.GetAllTasks();
-            return Ok(tasks);
+            return View(tasks);
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetTaskById(int id)
+        
+        public async Task<IActionResult> Details(int id)
         {
             var task = await _taskService.GetTaskById(id);
             if (task == null)
             {
                 return NotFound();
             }
-            return Ok(task);
+            return View(task);
         }
 
+        
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        
         [HttpPost]
-        public async Task<IActionResult> CreateTask([FromBody] CreateTaskModel task)
+       
+        public async Task<IActionResult> Create([Bind("TaskName,TaskDescription,StartDate,EndDate,TaskStatus,AssignedTo,ListID")] CreateTaskModel task)
         {
-            if (!ModelState.IsValid)
+            if (ModelState.IsValid)
             {
-                return BadRequest(ModelState);
+                await _taskService.AddTask(task);
+                return RedirectToAction(nameof(Index));
             }
-
-            await _taskService.AddTask(task);
-            return Ok(task);
+            return View(task);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateTask(int id, [FromBody] CreateTaskModel task)
+        
+        public async Task<IActionResult> Edit(int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var result = await _taskService.UpdateTask(id, task);
-            if (!result)
+            var task = await _taskService.GetTaskById(id);
+            if (task == null)
             {
                 return NotFound();
             }
-            return NoContent();
+            return View(task);
         }
 
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTask(int id)
+        
+        [HttpPost]
+       
+        public async Task<IActionResult> Edit(int id, [Bind("TaskId,TaskName,TaskDescription,StartDate,EndDate,TaskStatus,AssignedTo,ListID")] CreateTaskModel task)
+        {
+ 
+
+            if (ModelState.IsValid)
+            {
+                var result = await _taskService.UpdateTask(id, task);
+                if (result)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                return NotFound();
+            }
+            return View(task);
+        }
+
+        
+        public async Task<IActionResult> Delete(int id)
+        {
+            var task = await _taskService.GetTaskById(id);
+            if (task == null)
+            {
+                return NotFound();
+            }
+            return View(task);
+        }
+
+        
+        [HttpPost, ActionName("Delete")]
+        
+        public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var result = await _taskService.DeleteTask(id);
-            if (!result)
+            if (result)
             {
-                return NotFound();
+                return RedirectToAction(nameof(Index));
             }
-            return NoContent();
+            return NotFound();
         }
     }
 }
