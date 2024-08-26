@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using TaskManager.Data.Entities;
 using TaskManager.Models;
 
 namespace TaskManager.Helpers
@@ -8,6 +9,8 @@ namespace TaskManager.Helpers
         public MappingProfile()
         {
             CreateMap<Data.Entities.Task, CreateTaskModel>()
+                .ReverseMap();
+            CreateMap<UserStory, AddOrUpdateStory>()
                 .ReverseMap();
         }
     }

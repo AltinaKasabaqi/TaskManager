@@ -7,11 +7,11 @@ using TaskManager.Services.Interfaces;
 namespace TaskManager.Controllers
 {
    
-    public class ListController : Controller
+    public class UserStoryController : Controller
     {
-        private readonly IListService _listService;
+        private readonly IUserStoryService _listService;
 
-        public ListController(IListService listService)
+        public UserStoryController(IUserStoryService listService)
         {
             _listService = listService;
         }
@@ -19,14 +19,14 @@ namespace TaskManager.Controllers
         // GET: /List
         public async Task<IActionResult> Index()
         {
-            var lists = await _listService.GetLists();
+            var lists = await _listService.GetUserStories();
             return View(lists); 
         }
 
         // GET: /List/Details/5
         public async Task<IActionResult> Details(int id)
         {
-            var list = await _listService.GetListById(id);
+            var list = await _listService.GetUserStoryById(id);
             if (list == null)
             {
                 return NotFound();
@@ -43,11 +43,11 @@ namespace TaskManager.Controllers
         // POST: /List/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ListName")] AddOrUpdateList listDto)
+        public async Task<IActionResult> Create([Bind("ListName")] AddOrUpdateStory listDto)
         {
             if (ModelState.IsValid)
             {
-                var newListId = await _listService.CreateList(listDto);
+                var newListId = await _listService.CreateUserStory(listDto);
                 return RedirectToAction(nameof(Details), new { id = newListId });
             }
             return View(listDto); 
@@ -56,7 +56,7 @@ namespace TaskManager.Controllers
         // GET: /List/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
-            var list = await _listService.GetListById(id);
+            var list = await _listService.GetUserStoryById(id);
             if (list == null)
             {
                 return NotFound();
@@ -67,7 +67,7 @@ namespace TaskManager.Controllers
         // POST: /List/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ListName")] AddOrUpdateList listDto)
+        public async Task<IActionResult> Edit(int id, [Bind("ListName")] AddOrUpdateStory listDto)
         {
             if (!ModelState.IsValid)
             {
@@ -76,7 +76,7 @@ namespace TaskManager.Controllers
 
             try
             {
-                await _listService.UpdateList(id, listDto);
+                await _listService.UpdateUserStory(id, listDto);
             }
             catch (Exception ex)
             {
@@ -90,7 +90,7 @@ namespace TaskManager.Controllers
         // GET: /List/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
-            var list = await _listService.GetListById(id);
+            var list = await _listService.GetUserStoryById(id);
             if (list == null)
             {
                 return NotFound();
@@ -103,7 +103,7 @@ namespace TaskManager.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            await _listService.DeleteList(id);
+            await _listService.DeleteUserStory(id);
             return RedirectToAction(nameof(Index));
         }
     }

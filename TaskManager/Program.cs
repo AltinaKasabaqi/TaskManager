@@ -15,11 +15,11 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 builder.Services.AddScoped<ITaskService, TaskService>();
-builder.Services.AddScoped<IListService, ListService>();
+builder.Services.AddScoped<IUserStoryService, UserStoryService>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 
-builder.Services.AddScoped<IDbInitializer, DbInitializer>();
+//builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 
 
 var app = builder.Build();

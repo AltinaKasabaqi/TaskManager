@@ -12,9 +12,9 @@ namespace TaskManager.Data.Entities
         public string? TaskStatus { get; set;}
         public string? AssignedTo { get; set; }
      
-        [ForeignKey("ListID")]
-        public int ListID { get; set; }
-        public List list { get; set; }
+        [ForeignKey("StoryId")]
+        public int StoryId { get; set; }
+        public UserStory Story { get; set; }
       
     }
 }

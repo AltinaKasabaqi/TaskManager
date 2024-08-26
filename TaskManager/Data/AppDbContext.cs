@@ -10,22 +10,22 @@ namespace TaskManager.Data
 
         }
 
-        public DbSet<List> Lists { get; set; }
+        public DbSet<UserStory> UserStories { get; set; }
 
         public DbSet<Entities.Task> Tasks { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            ConfigureList(modelBuilder);
+            ConfigureStory(modelBuilder);
             
         }
 
-        private void ConfigureList(ModelBuilder modelBuilder)
+        private void ConfigureStory(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Entities.Task>()
-                .HasOne(t => t.list)
+                .HasOne(t => t.Story)
                 .WithMany()
-                .HasForeignKey(t => t.ListID);
+                .HasForeignKey(t => t.StoryId);
         }
 
        
