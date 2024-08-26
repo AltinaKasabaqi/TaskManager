@@ -9,7 +9,7 @@ namespace TaskManager.Data.Entities
         public string? TaskDescription { get; set; }
         public DateTime? StartDate { get; set; } = DateTime.UtcNow;
         public DateTime? EndDate { get; set; }    
-        public string? TaskStatus { get; set;}
+        public TaskStatus TaskStatus { get; set;}
         public string? AssignedTo { get; set; }
      
         [ForeignKey("StoryId")]
