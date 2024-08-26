@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <Folder Include="Data\DbInitializer\" />
-    <Folder Include="Services\Interfaces\" />
   </ItemGroup>
 
   <ItemGroup>

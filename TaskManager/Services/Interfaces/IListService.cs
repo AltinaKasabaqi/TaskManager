@@ -1,6 +1,6 @@
 ﻿namespace TaskManager.Services.Interfaces
 {
-    public class IListService
+    public interface IListService
     {
     }
 }
