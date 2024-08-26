@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using TaskManager.Data;
+using TaskManager.Data.DbInitializer;
 using TaskManager.Services;
 using TaskManager.Services.Interfaces;
 
@@ -13,7 +14,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DevConnection"));
 });
 builder.Services.AddScoped<IListService, ListService>();
-
+builder.Services.AddScoped<IDbInitializer, DbInitializer>();
 // Shto Swagger
 builder.Services.AddSwaggerGen(c =>
 {
@@ -43,6 +44,9 @@ else
         c.RoutePrefix = string.Empty; // Swagger UI do të jetë në root të aplikacionit
     });
 }
+
+var dbInitializer = app.Services.CreateScope().ServiceProvider.GetRequiredService<IDbInitializer>();
+dbInitializer.Initialize();
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();

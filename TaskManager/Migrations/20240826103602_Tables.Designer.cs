@@ -12,7 +12,7 @@ using TaskManager.Data;
 namespace TaskManager.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240826075146_Tables")]
+    [Migration("20240826103602_Tables")]
     partial class Tables
     {
         /// <inheritdoc />
