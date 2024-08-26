@@ -1,5 +1,8 @@
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using TaskManager.Data;
+using TaskManager.Services;
+using TaskManager.Services.Interfaces;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +12,18 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DevConnection"));
 });
+builder.Services.AddScoped<IListService, ListService>();
+
+// Shto Swagger
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Version = "v1",
+        Title = "Task Manager API",
+        Description = "A simple ASP.NET Core MVC API for managing tasks"
+    });
+});
 
 var app = builder.Build();
 
@@ -16,8 +31,17 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+}
+else
+{
+    // Konfiguro Swagger vetëm në zhvillim
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Task Manager API V1");
+        c.RoutePrefix = string.Empty; // Swagger UI do të jetë në root të aplikacionit
+    });
 }
 
 app.UseHttpsRedirection();
