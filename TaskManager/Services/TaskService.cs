@@ -1,37 +1,30 @@
-﻿using Microsoft.Win32;
-using TaskManager.Data;
-using TaskManager.Services.Interfaces;
-using TaskManager.Data.Entities;
+﻿using AutoMapper;
 using Microsoft.EntityFrameworkCore;
+using TaskManager.Data;
+using TaskManager.Data.Entities;
+using TaskManager.Models;
+using TaskManager.Services.Interfaces;
 
 namespace TaskManager.Services
 {
     public class TaskService : ITaskService
-    { 
-
+    {
         private readonly AppDbContext _dbContext;
+        private readonly IMapper _mapper;
 
-        public TaskService(AppDbContext dbContext)
+        public TaskService(AppDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
+            _mapper = mapper;
         }
 
-
-       
-        public async Task<bool> AddTask(Data.Entities.Task task)
+        public async Task<bool> AddTask(CreateTaskModel taskDto)
         {
-             _dbContext.Add(new Data.Entities.Task
-            {
-                TaskName = task.TaskName,
-                TaskDescription = task.TaskDescription,
-                EndDate = task.EndDate,
-                TaskStatus = task.TaskStatus,
-                AssignedTo = task.AssignedTo,
-                ListID = task.ListID,
+            var task = _mapper.Map<Data.Entities.Task>(taskDto);
 
-            });
-
+            _dbContext.Tasks.Add(task);
             await _dbContext.SaveChangesAsync();
+
             return true;
         }
 
@@ -41,39 +34,36 @@ namespace TaskManager.Services
 
             if (taskToDelete != null)
             {
-                _dbContext.Remove(taskToDelete);
+                _dbContext.Tasks.Remove(taskToDelete);
+                await _dbContext.SaveChangesAsync();
                 return true;
             }
             else
             {
                 return false;
             }
-
         }
 
-        public async Task<List<Data.Entities.Task>> GetAllTasks()
+        public async Task<List<CreateTaskModel>> GetAllTasks()
         {
-            return await _dbContext.Tasks.ToListAsync();
+            var tasks = await _dbContext.Tasks.ToListAsync();
+            return _mapper.Map<List<CreateTaskModel>>(tasks);
         }
 
-        public async Task<Data.Entities.Task> GetTaskById(int id)
+        public async Task<CreateTaskModel> GetTaskById(int id)
         {
-            return await _dbContext.Tasks.FirstOrDefaultAsync(x => x.TaskId == id);
+            var task = await _dbContext.Tasks.FirstOrDefaultAsync(x => x.TaskId == id);
+            return _mapper.Map<CreateTaskModel>(task);
         }
 
-        public async Task<bool> UpdateTask(int id, Data.Entities.Task task)
+        public async Task<bool> UpdateTask(int id, CreateTaskModel taskDto)
         {
             var taskToUpdate = await _dbContext.Tasks.FirstOrDefaultAsync(x => x.TaskId == id);
 
             if (taskToUpdate != null)
             {
-                taskToUpdate.TaskName = task.TaskName;
-                taskToUpdate.TaskDescription = task.TaskDescription;
-                taskToUpdate.EndDate = task.EndDate;
-                taskToUpdate.TaskStatus = task.TaskStatus;
-                taskToUpdate.AssignedTo = task.AssignedTo;
-                taskToUpdate.ListID = task.ListID;
-
+                _mapper.Map(taskDto, taskToUpdate);
+                await _dbContext.SaveChangesAsync();
                 return true;
             }
             else
@@ -81,7 +71,5 @@ namespace TaskManager.Services
                 return false;
             }
         }
-
-
     }
 }
