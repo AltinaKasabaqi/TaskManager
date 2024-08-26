@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TaskManager.Data.Entities;
+using TaskManager.Models;
 using TaskManager.Services.Interfaces;
 
 namespace TaskManager.Controllers
@@ -19,15 +20,18 @@ namespace TaskManager.Controllers
 
 
         [HttpPost(Name = "CreateList")]
-        public async Task<IActionResult> CreateList([FromBody] List list)
+        public async Task<IActionResult> CreateList([FromBody] AddOrUpdateList listDto)
         {
-            if (list == null)
+            if (listDto == null)
             {
                 return BadRequest("List object is null");
             }
-            var newListId = await _listService.CreateList(list);
-            return CreatedAtAction(nameof(_listService.GetListById), new { id = newListId }, list);
+
+            var newListId = await _listService.CreateList(listDto);
+
+            return CreatedAtAction(nameof(GetListById), new { id = newListId }, listDto);
         }
+
 
 
         [HttpGet("{id}", Name = "GetListById")]
@@ -49,12 +53,12 @@ namespace TaskManager.Controllers
         }
 
         [HttpPut("{id}", Name = "UpdateList")]
-        public async Task<IActionResult> UpdateList(int id, [FromBody] List list)
+        public async Task<IActionResult> UpdateList(int id, [FromBody] AddOrUpdateList list)
         {
-            if (list == null || list.ListId != id)
-            {
-                return BadRequest("Invalid list object");
-            }
+            //if (list == null || list.ListId != id)
+            //{
+            //    return BadRequest("Invalid list object");
+            //}
             await _listService.UpdateList(id, list);
             return NoContent();
         }
