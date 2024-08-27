@@ -10,5 +10,8 @@ namespace TaskManager.Services.Interfaces
         Task <bool> AddTask(CreateTaskModel task);
         Task <bool> UpdateTask(int id, CreateTaskModel task);
         Task <bool> DeleteTask(int id);
+        Task<IEnumerable<CreateTaskModel>> GetTasksByStoryId(int id);
+
+        Task<IEnumerable<UserStoryWithTasksModel>> GetUserStoriesWithTasks();
     }
 }

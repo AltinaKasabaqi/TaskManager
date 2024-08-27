@@ -71,5 +71,38 @@ namespace TaskManager.Services
                 return false;
             }
         }
+
+        public async Task<IEnumerable<CreateTaskModel>> GetTasksByStoryId(int id)
+        {
+            var tasks = await _dbContext.Tasks
+                .Where(x => x.StoryId == id)
+                .ToListAsync();
+
+            return _mapper.Map<IEnumerable<CreateTaskModel>>(tasks);
+        }
+
+
+        public async Task<IEnumerable<UserStoryWithTasksModel>> GetUserStoriesWithTasks()
+        {
+            var userStories = await _dbContext.UserStories.ToListAsync();
+            var userStoriesWithTasks = new List<UserStoryWithTasksModel>();
+
+            foreach (var userStory in userStories)
+            {
+                var tasks = await GetTasksByStoryId(userStory.StoryId);
+                var userStoryWithTasks = new UserStoryWithTasksModel
+                {
+                    Story = _mapper.Map<UserStory>(userStory),
+                    Tasks = tasks
+                };
+
+                userStoriesWithTasks.Add(userStoryWithTasks);
+            }
+
+            return userStoriesWithTasks;
+        }
+
+
+
     }
 }

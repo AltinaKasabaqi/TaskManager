@@ -1,37 +1,34 @@
 using Microsoft.AspNetCore.Mvc;
-using TaskManager.Data.Entities; // Correct namespace
 using TaskManager.Models;
-using System.Diagnostics;
-using TaskManager.Data;
+using TaskManager.Services.Interfaces;
 
-namespace TaskManager.Controllers
+public class HomeController : Controller
 {
-    public class HomeController : Controller
+    private readonly IUserStoryService _userStoryService;
+    private readonly ITaskService _taskService;
+
+    public HomeController(IUserStoryService listService, ITaskService taskService)
     {
-        private readonly ILogger<HomeController> _logger;
-        private readonly AppDbContext _context; 
+        _userStoryService = listService;
+        _taskService = taskService;
+    }
 
-        public HomeController(ILogger<HomeController> logger, AppDbContext context)
+    public async Task<IActionResult> Index()
+    {
+        var userStories = await _userStoryService.GetUserStories();
+
+        var userStoriesWithTasks = new List<UserStoryWithTasksModel>();
+
+        foreach (var story in userStories)
         {
-            _logger = logger;
-            _context = context;
+            var tasks = await _taskService.GetTasksByStoryId(story.StoryId);
+            userStoriesWithTasks.Add(new UserStoryWithTasksModel
+            {
+                Story = story,
+                Tasks = (IEnumerable<CreateTaskModel>)tasks
+            });
         }
 
-        public IActionResult Index()
-        {
-            var userStories = _context.UserStories.ToList(); 
-            return View(userStories);
-        }
-
-        public IActionResult Privacy()
-        {
-            return View();
-        }
-
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
-        {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
+        return View(userStoriesWithTasks);
     }
 }

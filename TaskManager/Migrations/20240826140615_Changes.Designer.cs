@@ -12,8 +12,8 @@ using TaskManager.Data;
 namespace TaskManager.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240826103602_Tables")]
-    partial class Tables
+    [Migration("20240826140615_Changes")]
+    partial class Changes
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -24,23 +24,6 @@ namespace TaskManager.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("TaskManager.Data.Entities.List", b =>
-                {
-                    b.Property<int>("ListId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ListId"));
-
-                    b.Property<string>("ListName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("ListId");
-
-                    b.ToTable("Lists");
-                });
 
             modelBuilder.Entity("TaskManager.Data.Entities.Task", b =>
                 {
@@ -56,11 +39,11 @@ namespace TaskManager.Migrations
                     b.Property<DateTime?>("EndDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<int>("ListID")
-                        .HasColumnType("int");
-
                     b.Property<DateTime?>("StartDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int>("StoryId")
+                        .HasColumnType("int");
 
                     b.Property<string>("TaskDescription")
                         .HasColumnType("nvarchar(max)");
@@ -68,25 +51,52 @@ namespace TaskManager.Migrations
                     b.Property<string>("TaskName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TaskStatus")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("TaskStatus")
+                        .HasColumnType("int");
 
                     b.HasKey("TaskId");
 
-                    b.HasIndex("ListID");
+                    b.HasIndex("StoryId");
 
                     b.ToTable("Tasks");
                 });
 
+            modelBuilder.Entity("TaskManager.Data.Entities.UserStory", b =>
+                {
+                    b.Property<int>("StoryId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("StoryId"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
+
+                    b.Property<string>("StoryDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("StoryTitle")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("StoryId");
+
+                    b.ToTable("UserStories");
+                });
+
             modelBuilder.Entity("TaskManager.Data.Entities.Task", b =>
                 {
-                    b.HasOne("TaskManager.Data.Entities.List", "list")
+                    b.HasOne("TaskManager.Data.Entities.UserStory", "Story")
                         .WithMany()
-                        .HasForeignKey("ListID")
+                        .HasForeignKey("StoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("list");
+                    b.Navigation("Story");
                 });
 #pragma warning restore 612, 618
         }

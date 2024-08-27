@@ -30,7 +30,16 @@ namespace TaskManager.Controllers
             return View(task);
         }
 
-        
+        public async Task<IActionResult> Detailss(int id)
+        {
+            var task = await _taskService.GetTasksByStoryId(id);
+            if (task == null)
+            {
+                return NotFound();
+            }
+            return View(task);
+        }
+
         public IActionResult Create()
         {
             return View();

@@ -59,7 +59,7 @@ namespace TaskManager.Services
             return await _context.UserStories.ToListAsync();
         }
 
-        public async System.Threading.Tasks.Task UpdateUserStory(int id, AddOrUpdateStory story)
+        public async System.Threading.Tasks.Task UpdateUserStoryStatus(int id, AddOrUpdateStory story)
         {
             var existingUserStory = await _context.UserStories.FirstOrDefaultAsync(x => x.StoryId == id);
             if (existingUserStory == null)
@@ -67,8 +67,11 @@ namespace TaskManager.Services
                 throw new ArgumentException("List not found", nameof(id));
             }
 
-            existingUserStory.StoryTitle = story.StoryTitle;
+            existingUserStory.Status = story.Status;
             await _context.SaveChangesAsync();
         }
+
+       
+
     }
 }

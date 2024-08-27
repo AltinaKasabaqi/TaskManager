@@ -1,4 +1,4 @@
-﻿@model IEnumerable<TaskManager.Data.Entities.UserStory>
+﻿@model IEnumerable<TaskManager.Models.UserStoryWithTasksModel>
 
 @{
     ViewData["Title"] = "Home Page";
@@ -12,15 +12,22 @@
 <div class="container">
     <h2>User Stories</h2>
     <div class="row">
-        @foreach (var story in Model)
+        @foreach (var storyWithTasks in Model)
         {
             <div class="col-md-4">
                 <div class="card mb-4 shadow-sm">
                     <div class="card-body">
-                        <h5 class="card-title">@story.StoryTitle</h5>
-                        <p class="card-text">@story.StoryDescription</p>
-                        <p class="card-text"><small class="text-muted">Status: @story.Status</small></p>
-                        <p class="card-text"><small class="text-muted">Created At: @story.CreatedAt.ToString("yyyy-MM-dd")</small></p>
+                        <h5 class="card-title">@storyWithTasks.Story.StoryTitle</h5>
+                        <p class="card-text">@storyWithTasks.Story.StoryDescription</p>
+                        <p class="card-text"><small class="text-muted">Status: @storyWithTasks.Story.Status</small></p>
+                        <p class="card-text"><small class="text-muted">Created At: @storyWithTasks.Story.CreatedAt.ToString("yyyy-MM-dd")</small></p>
+                        <h6>Tasks:</h6>
+                        <ul>
+                            @foreach (var task in storyWithTasks.Tasks)
+                            {
+                                <li>@task.TaskName</li>
+                            }
+                        </ul>
                     </div>
                 </div>
             </div>

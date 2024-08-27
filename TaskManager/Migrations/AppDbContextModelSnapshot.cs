@@ -48,8 +48,8 @@ namespace TaskManager.Migrations
                     b.Property<string>("TaskName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("TaskStatus")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("TaskStatus")
+                        .HasColumnType("int");
 
                     b.HasKey("TaskId");
 
@@ -69,9 +69,8 @@ namespace TaskManager.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<int>("Status")
+                        .HasColumnType("int");
 
                     b.Property<string>("StoryDescription")
                         .IsRequired()

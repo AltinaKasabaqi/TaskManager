@@ -1,0 +1,43 @@
+﻿@* @model IEnumerable<TaskManager.Models.UserStoryWithTasksModel>
+
+<div class="container">
+    <h2>User Stories</h2>
+    <div class="row">
+        @foreach (var storyWithTasks in Model)
+        {
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title">@storyWithTasks.Story?.StoryTitle</h5>
+                        <p class="card-text">@storyWithTasks.Story?.StoryDescription</p>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                Status: @storyWithTasks.Story?.Status
+                            </small>
+                        </p>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                Created At: @storyWithTasks.Story?.CreatedAt.ToString("yyyy-MM-dd")
+                            </small>
+                        </p>
+
+                        <h6>Tasks:</h6>
+                        <ul>
+                            @if (storyWithTasks.Tasks != null && storyWithTasks.Tasks.Any())
+                            {
+                                @foreach (var task in storyWithTasks.Tasks)
+                                {
+                                    <li>@task.TaskName - @task.TaskDescription</li>
+                                }
+                            }
+                            else
+                            {
+                                <li>No tasks available.</li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div> *@

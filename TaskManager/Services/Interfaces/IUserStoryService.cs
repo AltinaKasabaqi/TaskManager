@@ -11,7 +11,7 @@ namespace TaskManager.Services.Interfaces
         Task<int> CreateUserStory(AddOrUpdateStory userStoryDto);
         Task<UserStory> GetUserStoryById(int id);
         Task<List<UserStory>> GetUserStories();
-        System.Threading.Tasks.Task UpdateUserStory(int id, AddOrUpdateStory list);
+        System.Threading.Tasks.Task UpdateUserStoryStatus(int id, AddOrUpdateStory list);
         System.Threading.Tasks.Task DeleteUserStory(int id);
     }
 }

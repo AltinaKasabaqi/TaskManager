@@ -76,7 +76,7 @@ namespace TaskManager.Controllers
 
             try
             {
-                await _listService.UpdateUserStory(id, listDto);
+                await _listService.UpdateUserStoryStatus(id, listDto);
             }
             catch (Exception ex)
             {

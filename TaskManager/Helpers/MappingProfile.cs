@@ -10,7 +10,11 @@ namespace TaskManager.Helpers
         {
             CreateMap<Data.Entities.Task, CreateTaskModel>()
                 .ReverseMap();
+
             CreateMap<UserStory, AddOrUpdateStory>()
+                .ReverseMap();
+
+            CreateMap<UserStory, UserStoryWithTasksModel>()
                 .ReverseMap();
         }
     }
