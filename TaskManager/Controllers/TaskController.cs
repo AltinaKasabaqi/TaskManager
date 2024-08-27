@@ -42,18 +42,19 @@ namespace TaskManager.Controllers
             return View(tasks);
         }
 
-        // GET: /Task/Create/5
+        //GET: /Task/Create/5
         public async Task<IActionResult> Create(int storyId)
         {
             var storyExists = await _taskService.DoesStoryExist(storyId);
             if (!storyExists)
             {
-                return NotFound(); // Or handle as needed
+                return NotFound();
             }
 
             var model = new CreateTaskModel { StoryId = storyId };
-            return View("TaskForm", model);
+            return View(model); // Të ketë një 'Create.cshtml' në folderin e Task
         }
+
 
         // POST: /Task/Create
         [HttpPost]
@@ -61,19 +62,21 @@ namespace TaskManager.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return View("TaskForm", task);
+                return View(task);
             }
 
             var storyExists = await _taskService.DoesStoryExist(task.StoryId);
             if (!storyExists)
             {
                 ModelState.AddModelError("", "The specified story does not exist.");
-                return View("TaskForm", task);
+                return View(task);
             }
 
             await _taskService.AddTask(task);
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Home");
         }
+
+
 
         // GET: /Task/Edit/5
         public async Task<IActionResult> Edit(int id)

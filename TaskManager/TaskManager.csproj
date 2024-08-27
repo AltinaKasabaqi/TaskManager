@@ -9,6 +9,7 @@
   <ItemGroup>
     <Folder Include="Data\DbInitializer\" />
     <Folder Include="Migrations\" />
+    <Folder Include="Views\Task\" />
   </ItemGroup>
 
   <ItemGroup>

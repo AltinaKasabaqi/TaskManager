@@ -1,11 +1,10 @@
-﻿@{
-    ViewData["Title"] = "Create Task";
-}
+﻿@model TaskManager.Models.CreateTaskModel
 
 <h2>Create Task</h2>
 
-<form id="createTaskForm" action="/Task/Create" method="post">
+<form id="createTaskForm" method="post" asp-action="Create">
     <input type="hidden" name="StoryId" value="@Model.StoryId" />
+
     <div class="form-group">
         <input class="form-control" placeholder="Title" name="TaskName" />
     </div>
@@ -28,5 +27,3 @@
 
     <button type="submit" class="btn btn-primary">Create Task</button>
 </form>
-
-<div id="formResponse"></div>

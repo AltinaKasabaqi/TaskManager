@@ -1,25 +1,30 @@
-<script>
-    $(document).ready(function () {
-        $('#createTaskForm').on('submit', function (event) {
-            event.preventDefault(); // Prevent the default form submission
+$(document).ready(function () {
+    $('#addTaskModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget); // Button that triggered the modal
+        var storyId = button.data('story-id'); // Extract info from data-* attributes
 
-            var form = $(this);
-            var url = form.attr('action'); // Get the action URL
-            var formData = form.serialize(); // Serialize form data
+        var modal = $(this);
+        modal.find('input[name="StoryId"]').val(storyId); // Set the story ID in the form
+    });
 
-            $.ajax({
-                type: 'POST',
-                url: url,
-                data: formData,
-                success: function (response) {
-                    $('#formResponse').html('<div class="alert alert-success">Task created successfully!</div>');
-                    // Optionally, you can clear the form or perform other actions
-                    form[0].reset();
-                },
-                error: function (xhr, status, error) {
-                    $('#formResponse').html('<div class="alert alert-danger">An error occurred: ' + xhr.responseText + '</div>');
-                }
-            });
+    $('#createTaskForm').on('submit', function (e) {
+        e.preventDefault();
+        $('#loadingIndicator').show(); // Show loading indicator
+
+        $.ajax({
+            type: 'POST',
+            url: '/Task/Create',
+            data: $(this).serialize(),
+            success: function (response) {
+                $('#loadingIndicator').hide();
+                $('#addTaskModal').modal('hide');
+                location.reload();
+            },
+            error: function (xhr, status, error) {
+                $('#loadingIndicator').hide();
+                var errorMessage = xhr.responseText || 'An error occurred while adding the task: ' + error;
+                $('#errorMessage').text(errorMessage).show();
+            }
         });
     });
-</script>
+
