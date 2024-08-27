@@ -13,5 +13,7 @@ namespace TaskManager.Services.Interfaces
         Task<IEnumerable<CreateTaskModel>> GetTasksByStoryId(int id);
 
         Task<IEnumerable<UserStoryWithTasksModel>> GetUserStoriesWithTasks();
+
+        Task<bool> DoesStoryExist(int storyId);
     }
 }

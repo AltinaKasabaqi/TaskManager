@@ -102,6 +102,10 @@ namespace TaskManager.Services
             return userStoriesWithTasks;
         }
 
+        public async Task<bool> DoesStoryExist(int storyId)
+        {
+            return await _dbContext.UserStories.AnyAsync(us => us.StoryId == storyId);
+        }
 
 
     }

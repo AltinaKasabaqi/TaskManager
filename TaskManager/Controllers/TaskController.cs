@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TaskManager.Models;
 using TaskManager.Services.Interfaces;
+
 namespace TaskManager.Controllers
 {
     public class TaskController : Controller
@@ -12,14 +13,14 @@ namespace TaskManager.Controllers
             _taskService = taskService;
         }
 
-        
+        // GET: /Task/
         public async Task<IActionResult> Index()
         {
             var tasks = await _taskService.GetAllTasks();
             return View(tasks);
         }
 
-        
+        // GET: /Task/Details/5
         public async Task<IActionResult> Details(int id)
         {
             var task = await _taskService.GetTaskById(id);
@@ -30,35 +31,51 @@ namespace TaskManager.Controllers
             return View(task);
         }
 
+        // GET: /Task/Detailss/5
         public async Task<IActionResult> Detailss(int id)
         {
-            var task = await _taskService.GetTasksByStoryId(id);
-            if (task == null)
+            var tasks = await _taskService.GetTasksByStoryId(id);
+            if (tasks == null || !tasks.Any())
             {
                 return NotFound();
             }
-            return View(task);
+            return View(tasks);
         }
 
-        public IActionResult Create()
+        // GET: /Task/Create/5
+        public async Task<IActionResult> Create(int storyId)
         {
-            return View();
-        }
-
-        
-        [HttpPost]
-       
-        public async Task<IActionResult> Create([Bind("TaskName,TaskDescription,StartDate,EndDate,TaskStatus,AssignedTo,ListID")] CreateTaskModel task)
-        {
-            if (ModelState.IsValid)
+            var storyExists = await _taskService.DoesStoryExist(storyId);
+            if (!storyExists)
             {
-                await _taskService.AddTask(task);
-                return RedirectToAction(nameof(Index));
+                return NotFound(); // Or handle as needed
             }
-            return View(task);
+
+            var model = new CreateTaskModel { StoryId = storyId };
+            return View("TaskForm", model);
         }
 
-        
+        // POST: /Task/Create
+        [HttpPost]
+        public async Task<IActionResult> Create([Bind("TaskName,TaskDescription,StartDate,EndDate,TaskStatus,AssignedTo,StoryId")] CreateTaskModel task)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("TaskForm", task);
+            }
+
+            var storyExists = await _taskService.DoesStoryExist(task.StoryId);
+            if (!storyExists)
+            {
+                ModelState.AddModelError("", "The specified story does not exist.");
+                return View("TaskForm", task);
+            }
+
+            await _taskService.AddTask(task);
+            return RedirectToAction(nameof(Index));
+        }
+
+        // GET: /Task/Edit/5
         public async Task<IActionResult> Edit(int id)
         {
             var task = await _taskService.GetTaskById(id);
@@ -69,26 +86,34 @@ namespace TaskManager.Controllers
             return View(task);
         }
 
-        
+        // POST: /Task/Edit/5
         [HttpPost]
-       
-        public async Task<IActionResult> Edit(int id, [Bind("TaskId,TaskName,TaskDescription,StartDate,EndDate,TaskStatus,AssignedTo,ListID")] CreateTaskModel task)
+        public async Task<IActionResult> Edit(int id, [Bind("TaskId,TaskName,TaskDescription,StartDate,EndDate,TaskStatus,AssignedTo,StoryId")] CreateTaskModel task)
         {
- 
+            
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var result = await _taskService.UpdateTask(id, task);
-                if (result)
-                {
-                    return RedirectToAction(nameof(Index));
-                }
-                return NotFound();
+                return View(task);
             }
-            return View(task);
+
+            var storyExists = await _taskService.DoesStoryExist(task.StoryId);
+            if (!storyExists)
+            {
+                ModelState.AddModelError("", "The specified story does not exist.");
+                return View(task);
+            }
+
+            var result = await _taskService.UpdateTask(id, task);
+            if (result)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            return NotFound();
         }
 
-        
+        // GET: /Task/Delete/5
         public async Task<IActionResult> Delete(int id)
         {
             var task = await _taskService.GetTaskById(id);
@@ -99,9 +124,8 @@ namespace TaskManager.Controllers
             return View(task);
         }
 
-        
+        // POST: /Task/Delete/5
         [HttpPost, ActionName("Delete")]
-        
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var result = await _taskService.DeleteTask(id);
