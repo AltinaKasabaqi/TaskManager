@@ -43,14 +43,14 @@ namespace TaskManager.Controllers
         // POST: /List/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ListName")] AddOrUpdateStory listDto)
+        public async Task<IActionResult> Create([Bind("StoryTitle", "StoryDescription", "Status")] AddOrUpdateStory storyDto)
         {
             if (ModelState.IsValid)
             {
-                var newListId = await _listService.CreateUserStory(listDto);
-                return RedirectToAction(nameof(Details), new { id = newListId });
+                var newStoryId = await _listService.CreateUserStory(storyDto);
+                return RedirectToAction("Index", "Home");
             }
-            return View(listDto); 
+            return View(storyDto);
         }
 
         // GET: /List/Edit/5

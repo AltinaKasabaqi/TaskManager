@@ -1,17 +1,12 @@
 ﻿@model IEnumerable<TaskManager.Models.UserStoryWithTasksModel>
 
-@{
-    ViewData["Title"] = "Home Page";
-}
-
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
-
 <div class="container">
     <h2>User Stories</h2>
     <div class="row">
+    <button style="height:40px" type="button" class="btn btn-primary" data-toggle="modal" data-target="#addStoryModal">
+     Add Story
+    </button>
+
         @foreach (var storyWithTasks in Model)
         {
             <div class="col-md-4">
@@ -28,9 +23,27 @@
                                 <li>@task.TaskName</li>
                             }
                         </ul>
+                       
                     </div>
                 </div>
             </div>
         }
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="addStoryModal" tabindex="-1" role="dialog" aria-labelledby="addStoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addStoryModalLabel">Add User Story</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                @Html.Partial("_CreateStoryForm", new TaskManager.Models.AddOrUpdateStory())
+            </div>
+        </div>
     </div>
 </div>

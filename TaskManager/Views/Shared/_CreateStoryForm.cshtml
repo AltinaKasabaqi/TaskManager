@@ -1,0 +1,13 @@
+﻿@model TaskManager.Models.AddOrUpdateStory
+
+<form id="createStoryForm" method="post" asp-controller="UserStory" asp-action="Create">
+    <div class="form-group">
+        <label for="StoryTitle">Title</label>
+        <input type="text" class="form-control" id="StoryTitle" name="StoryTitle" required />
+    </div>
+    <div class="form-group">
+        <label for="StoryDescription">Description</label>
+        <textarea class="form-control" id="StoryDescription" name="StoryDescription" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>
